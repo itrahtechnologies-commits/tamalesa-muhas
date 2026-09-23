@@ -1,0 +1,6 @@
+{
+  "name": "TAMELASA MUHAS",
+  "description": "Official portal of Tanzania Medical Laboratory Students' Association (TAMELASA - MUHAS Chapter).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
