@@ -1,14 +1,35 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node"
     }
+  },
+  "rewrites": [
+    { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/api/members", "destination": "/api/members" },
+    { "source": "/api/members/:id", "destination": "/api/members/[id]" },
+    { "source": "/api/bills", "destination": "/api/bills" },
+    { "source": "/api/payments", "destination": "/api/payments" },
+    { "source": "/api/content", "destination": "/api/content" },
+    { "source": "/api/admin", "destination": "/api/admin" },
+    { "source": "/pay/:orderId", "destination": "/api/pay/[orderId]" },
+    { "source": "/(.*)\\.html", "destination": "/$1.html" },
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/images/(.*)", "destination": "/images/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type,Authorization" }
+      ]
+    }
   ]
 }

@@ -2,15 +2,23 @@ import { fileURLToPath, URL } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig, Plugin } from 'vite';
-import { app as backendApp } from './server/index.ts';
 
+// The backend API plugin is only used during local dev (npm run dev).
+// On Vercel, API routes are handled by serverless functions in the /api directory.
 function backendApiPlugin(): Plugin {
   return {
     name: 'backend-api-plugin',
+    apply: 'serve', // ← Only applies during dev server, NOT during build
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
+      // Lazy import to avoid bundling server code into the frontend build
+      server.middlewares.use(async (req, res, next) => {
         if (req.url?.startsWith('/api') || req.url?.startsWith('/pay/')) {
-          backendApp(req as any, res as any, next);
+          try {
+            const { app: backendApp } = await import('./server/index.ts');
+            backendApp(req as Parameters<typeof backendApp>[0], res as Parameters<typeof backendApp>[1], next);
+          } catch {
+            next();
+          }
         } else {
           next();
         }
